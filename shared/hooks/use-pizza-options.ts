@@ -2,7 +2,7 @@ import { Variant } from '../components/shared/group-variants';
 import { useEffect, useState } from 'react';
 import { PizzaSize, PizzaType } from '../constants/pizza';
 import { useSet } from 'react-use';
-import { getAvailablePizzaSizes } from './get-available-pizza-sizes';
+import { getAvailablePizzaSizes } from '../lib/get-available-pizza-sizes';
 import { ProductItem } from '@prisma/client';
 
 interface ReturnProps {
@@ -10,6 +10,7 @@ interface ReturnProps {
   type: PizzaType;
   setSize: (size: PizzaSize) => void;
   setType: (type: PizzaType) => void;
+  currentItemId?: number;
   selectedIngredients: Set<number>;
   addIngredient: (id: number) => void;
   availableSizes: Variant[];
@@ -23,6 +24,10 @@ export const usePizzaOptions = (items: ProductItem[]): ReturnProps => {
   );
 
   const availableSizes = getAvailablePizzaSizes(items, type);
+
+  const currentItemId = items.find(
+    (item) => item.pizzaType === type && item.size === size
+  )?.id;
 
   useEffect(() => {
     const isAvailableSize = availableSizes?.find(
@@ -43,5 +48,6 @@ export const usePizzaOptions = (items: ProductItem[]): ReturnProps => {
     selectedIngredients,
     addIngredient,
     availableSizes,
+    currentItemId,
   };
 };

@@ -6,8 +6,7 @@ import { Button } from '../ui';
 import { PizzaSize, PizzaType, pizzaTypes } from '@/shared/constants/pizza';
 import { Ingredient, ProductItem } from '@prisma/client';
 import { calcTotalPizzaPrice } from '@/shared/lib/calc-total-pizza-price';
-import { usePizzaOptions } from '@/shared/lib/use-pizza-options';
-
+import { usePizzaOptions } from '@/shared/hooks/use-pizza-options';
 interface Props {
   imageUrl: string;
   name: string;
@@ -15,7 +14,7 @@ interface Props {
   items: ProductItem[];
   price: number;
   loading?: boolean;
-  onSubmit?: VoidFunction;
+  onSubmit: (itemId: number, ingredients: number[]) => void;
   className?: string;
 }
 
@@ -37,6 +36,7 @@ export const ChoosePizzaForm: React.FC<Props> = ({
     selectedIngredients,
     addIngredient,
     availableSizes,
+    currentItemId,
   } = usePizzaOptions(items);
 
   const totalPrice = calcTotalPizzaPrice(
@@ -52,12 +52,9 @@ export const ChoosePizzaForm: React.FC<Props> = ({
   } `;
 
   const handleClickAdd = () => {
-    onSubmit?.();
-    console.log({
-      size,
-      type,
-      ingredients: selectedIngredients,
-    });
+    if (currentItemId) {
+      onSubmit(currentItemId, Array.from(selectedIngredients));
+    }
   };
 
   return (
