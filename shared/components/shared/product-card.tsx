@@ -6,7 +6,7 @@ import { Plus } from 'lucide-react';
 import { Ingredient } from '@prisma/client';
 
 interface ProductCardProps {
-  id: string;
+  id: number;
   name: string;
   price: number;
   imageUrl: string;
