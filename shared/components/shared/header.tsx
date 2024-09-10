@@ -3,17 +3,23 @@ import React from 'react';
 import { Container } from './container';
 import Image from 'next/image';
 import { Button } from '../ui';
-import { ArrowRight, ShoppingCart, User } from 'lucide-react';
+import { User } from 'lucide-react';
 import Link from 'next/link';
 import { CartButton, SearchInput } from '.';
 
 interface IHeaderProps {
+  hasSearch?: boolean;
+  hasCart?: boolean;
   className?: string;
 }
 
-export const Header: React.FC<IHeaderProps> = ({ className }) => {
+export const Header: React.FC<IHeaderProps> = ({
+  hasSearch = true,
+  hasCart = true,
+  className,
+}) => {
   return (
-    <header className={cn('border border-b', className)}>
+    <header className={cn(' border-b', className)}>
       <Container className='flex items-center justify-between py-8'>
         {/* Левая часть */}
         <Link href='/'>
@@ -28,9 +34,11 @@ export const Header: React.FC<IHeaderProps> = ({ className }) => {
           </div>
         </Link>
 
-        <div className='mx-10 flex-1'>
-          <SearchInput />
-        </div>
+        {hasSearch && (
+          <div className='mx-10 flex-1'>
+            <SearchInput />
+          </div>
+        )}
 
         {/* Правая часть */}
         <div className='flex items-center gap-3'>
@@ -39,9 +47,7 @@ export const Header: React.FC<IHeaderProps> = ({ className }) => {
             Войти
           </Button>
 
-          <div>
-            <CartButton />
-          </div>
+          <div> {hasCart && <CartButton />}</div>
         </div>
       </Container>
     </header>
