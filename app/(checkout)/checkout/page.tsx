@@ -1,7 +1,48 @@
-import { Container, Title, WhiteBlock } from '@/shared/components/shared';
-import { Input } from '@/shared/components/ui';
+'use client';
+
+import { FormProvider, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+
+import {
+  CheckoutAddressForm,
+  CheckoutCart,
+  CheckoutPersonalForm,
+  CheckoutSidebar,
+  Container,
+  Title,
+} from '@/shared/components';
+import { useCart } from '@/shared/hooks/use-cart';
+import { checkoutFormSchema, CheckoutFormValues } from '@/shared/constants';
 
 export default function CheckoutPage() {
+  const { totalAmount, items, updateItemQuantity, removeCartItem, loading } =
+    useCart();
+
+  const form = useForm<CheckoutFormValues>({
+    resolver: zodResolver(checkoutFormSchema),
+    defaultValues: {
+      email: '',
+      firstName: '',
+      lastName: '',
+      phone: '',
+      address: '',
+      comment: '',
+    },
+  });
+
+  const onClickCountButton = (
+    id: number,
+    quantity: number,
+    type: 'plus' | 'minus'
+  ) => {
+    const newQuantity = type === 'plus' ? quantity + 1 : quantity - 1;
+    updateItemQuantity(id, newQuantity);
+  };
+
+  const onSubmit = (data: CheckoutFormValues) => {
+    console.log(data);
+  };
+
   return (
     <Container className='mt-10'>
       <Title
@@ -9,41 +50,34 @@ export default function CheckoutPage() {
         className='font-extrabold mb-8 text-[36px] '
       />
 
-      <div className='flex gap-10'>
-        {/* Левая часть */}
-        <div className='flex flex-col gap-10 flex-1 mb-20'></div>
+      <FormProvider {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <div className='flex gap-10'>
+            {/* Левая часть */}
+            <div className='flex flex-col gap-10 flex-1 mb-20'>
+              <CheckoutCart
+                items={items}
+                onClickCountButton={onClickCountButton}
+                removeCartItem={removeCartItem}
+                loading={loading}
+              />
 
-        <WhiteBlock title='1. Корзина'>1111</WhiteBlock>
+              <CheckoutPersonalForm
+                className={loading ? 'opacity-40 pointer-events-none' : ''}
+              />
 
-        <WhiteBlock title='2. Персональные данные' className={''}>
-          <div className='grid grid-cols-2 gap-5'>
-            <Input name='firstName' className='text-base' placeholder='Имя' />
-            <Input
-              name='lastName'
-              className='text-base'
-              placeholder='Фамилия'
-            />
-            <Input name='email' className='text-base' placeholder='E-Mail' />
-            <Input name='phone' className='text-base' placeholder='Телефон' />
+              <CheckoutAddressForm
+                className={loading ? 'opacity-40 pointer-events-none' : ''}
+              />
+            </div>
+
+            {/* Правая часть */}
+            <div className='w-[450px]'>
+              <CheckoutSidebar totalAmount={totalAmount} loading={loading} />
+            </div>
           </div>
-        </WhiteBlock>
-
-        <WhiteBlock title='3. Адрес доставки'>
-          <div className='grid grid-cols-2 gap-5'>
-            <Input name='firstName' className='text-base' placeholder='Имя' />
-            <Input
-              name='lastName'
-              className='text-base'
-              placeholder='Фамилия'
-            />
-            <Input name='email' className='text-base' placeholder='E-Mail' />
-            <Input name='phone' className='text-base' placeholder='Телефон' />
-          </div>
-        </WhiteBlock>
-      </div>
-
-      {/* Правая часть */}
-      <div className='w-[450px]'>ddddd</div>
+        </form>
+      </FormProvider>
     </Container>
   );
 }
