@@ -34,3 +34,4 @@ export { RequiredSymbol } from './required-symbol';
 export * from './cart-item-details';
 export * from './form-components';
 export * from './checkout';
+export * from './email-templates';
