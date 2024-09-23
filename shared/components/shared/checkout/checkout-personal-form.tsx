@@ -1,5 +1,4 @@
 import { FormInput, WhiteBlock } from '..';
-import { Input } from '../../ui';
 
 interface Props {
   className?: string;
